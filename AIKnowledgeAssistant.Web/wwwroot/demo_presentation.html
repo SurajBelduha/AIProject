@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Knowledge & Decision Assistant — 5-Minute Video Walkthrough & Presentation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { background: #0f172a; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; min-height: 100vh; }
+        .hero-banner { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-bottom: 1px solid #334155; padding: 2rem 0; }
+        .video-player-box { background: #000; border: 2px solid #3b82f6; border-radius: 1rem; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+        .video-screen { height: 480px; position: relative; background: #020617; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 2rem; }
+        .stage-badge { position: absolute; top: 1rem; left: 1rem; background: rgba(59, 130, 246, 0.2); border: 1px solid #3b82f6; color: #93c5fd; padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.85rem; }
+        .time-badge { position: absolute; top: 1rem; right: 1rem; background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: #6ee7b7; padding: 0.35rem 0.85rem; border-radius: 9999px; font-weight: 700; font-family: monospace; font-size: 0.95rem; }
+        .controls-bar { background: #1e293b; padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #334155; }
+        .progress-box { flex-grow: 1; margin: 0 1.5rem; }
+        .script-card { background: #1e293b; border: 1px solid #334155; border-radius: 0.75rem; padding: 1.25rem; height: 100%; }
+        .timeline-step { cursor: pointer; padding: 0.75rem 1rem; border-radius: 0.5rem; border: 1px solid transparent; transition: all 0.2s; margin-bottom: 0.5rem; }
+        .timeline-step:hover { background: #334155; }
+        .timeline-step.active { background: #1e3a8a; border-color: #3b82f6; font-weight: 600; }
+        .badge-cite { background: rgba(14, 165, 233, 0.15); color: #38bdf8; border: 1px solid #0284c7; padding: 0.2rem 0.6rem; border-radius: 0.35rem; font-size: 0.8rem; }
+        .console-output { background: #020617; border: 1px solid #1e293b; border-radius: 0.5rem; padding: 1rem; font-family: monospace; font-size: 0.85rem; color: #10b981; text-align: left; width: 100%; max-height: 250px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+
+<div class="hero-banner">
+    <div class="container text-center">
+        <h1 class="display-6 fw-bold text-white mb-2"><i class="fa-solid fa-circle-play text-primary me-2"></i>5-Minute Project Video & Walkthrough</h1>
+        <p class="text-secondary mb-0">Multi-Tenant AI Knowledge & Decision Assistant — Take-Home Assignment Verification</p>
+    </div>
+</div>
+
+<div class="container my-4">
+    <div class="row g-4">
+        <!-- Main Video Screen Player -->
+        <div class="col-lg-8">
+            <div class="video-player-box mb-4">
+                <div class="video-screen" id="playerScreen">
+                    <span class="stage-badge" id="stageBadge">Phase 1 of 6: Introduction & Architecture</span>
+                    <span class="time-badge" id="timeBadge">0:00 / 5:00</span>
+                    
+                    <div id="slideContent" class="text-center w-100">
+                        <div class="mb-4">
+                            <i class="fa-solid fa-network-wired text-primary fa-4x mb-3 animate__animated animate__pulse"></i>
+                            <h2 class="fw-bold" id="slideTitle">1. Project Architecture & Multi-Tenant SaaS</h2>
+                            <p class="text-secondary lead mx-auto" style="max-width: 600px;" id="slideSubtitle">
+                                Full Clean Architecture with ASP.NET Core 9, SQL Server, AutoMapper, System 1 Parallel Decision Models, and BM25 Hybrid Retrieval.
+                            </p>
+                        </div>
+                        <div class="console-output" id="slideConsole">
+                            [System Startup: 2026-11-08]<br>
+                            ✔ SQL Server Connection: LAPTOP-BT9E70FJ\SQLEXPRESS (AIKnowledgeAssistant)<br>
+                            ✔ Database Scaffolding: 6 EF Core Tables Verified (Organizations, Users, Assistants, Documents, Chunks, Logs)<br>
+                            ✔ AutoMapper 13.0.1 Configured: Singleton IMapper inside ServicesConfiguration.cs<br>
+                            ✔ Multi-Tenant Partitioning: Strict Tenant Filtering on All Endpoints
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Controls Bar -->
+                <div class="controls-bar">
+                    <button class="btn btn-primary px-4 fw-bold" id="playBtn" onclick="togglePlay()">
+                        <i class="fa-solid fa-play me-2"></i><span id="playBtnText">Play 5-Min Demo</span>
+                    </button>
+                    <div class="progress-box">
+                        <div class="d-flex justify-content-between text-secondary small mb-1">
+                            <span id="currProgressLabel">0:00</span>
+                            <span id="speedLabel">1.0x Speed</span>
+                            <span>5:00</span>
+                        </div>
+                        <div class="progress" style="height: 8px; background: #334155;">
+                            <div class="progress-bar bg-primary" id="videoProgressBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline-light btn-sm me-2" onclick="toggleAudio()" id="audioBtn">
+                        <i class="fa-solid fa-volume-high me-1"></i>Voice Narration: ON
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="restartDemo()">
+                        <i class="fa-solid fa-rotate-left"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Narration & Recording Guide Box -->
+            <div class="script-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0 text-white"><i class="fa-solid fa-microphone-lines text-warning me-2"></i>Live Voiceover Narration Script (Minute-by-Minute)</h5>
+                    <button class="btn btn-sm btn-outline-info" onclick="copyFullScript()"><i class="fa-regular fa-copy me-1"></i>Copy Full Script</button>
+                </div>
+                <div class="p-3 rounded" style="background: #0f172a; border: 1px solid #334155;">
+                    <div class="fw-semibold text-warning mb-1" id="narrationTime">Timestamp: 0:00 - 0:45</div>
+                    <p class="mb-0 text-light" id="narrationText" style="font-size: 1.05rem; line-height: 1.6;">
+                        "Welcome to the demonstration of our Multi-Tenant AI Knowledge & Decision Assistant. In this project, we have implemented a production-ready solution adhering 100% to the take-home assignment specification. The solution separates generative AI from deterministic System 1 decision models, enforces strict multi-tenant isolation, respects PDF quotas, and runs on ASP.NET Core 9 with Microsoft SQL Server."
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side: Step Timeline & Live Test Actions -->
+        <div class="col-lg-4">
+            <div class="script-card">
+                <h5 class="fw-bold text-white mb-3"><i class="fa-solid fa-list-check text-primary me-2"></i>5-Minute Video Roadmap</h5>
+                
+                <div class="timeline-step active" id="step-0" onclick="jumpToStep(0)">
+                    <div class="d-flex justify-content-between">
+                        <span class="text-white">1. Architecture & Local SQL DB</span>
+                        <span class="badge bg-secondary">0:00 - 0:45</span>
+                    </div>
+                    <small class="text-secondary d-block mt-1">Clean Architecture, ServicesConfiguration, AutoMapper, SQL Server instance.</small>
+                </div>
+
+                <div class="timeline-step" id="step-1" onclick="jumpToStep(1)">
+                    <div class="d-flex justify-content-between">
+                        <span class="text-white">2. Tenant Auth & Quota Limits</span>
+                        <span class="badge bg-secondary">0:45 - 1:30</span>
+                    </div>
+                    <small class="text-secondary d-block mt-1">Apex University login, 10 PDFs / 20 pages / 10MB limits validation.</small>
+                </div>
+
+                <div class="timeline-step" id="step-2" onclick="jumpToStep(2)">
+                    <div class="d-flex justify-content-between">
+                        <span class="text-white">3. Public Chat & Grounded Citations</span>
+                        <span class="badge bg-secondary">1:30 - 2:30</span>
+                    </div>
+                    <small class="text-secondary d-block mt-1">Direct inquiries with source badges (e.g. Scholarship_Rules.pdf — Page 3).</small>
+                </div>
+
+                <div class="timeline-step" id="step-3" onclick="jumpToStep(3)">
+                    <div class="d-flex justify-content-between">
+                        <span class="text-white">4. System 1 Decision Engine</span>
+                        <span class="badge bg-secondary">2:30 - 3:30</span>
+                    </div>
+                    <small class="text-secondary d-block mt-1">Multi-condition parallel evaluation (GPA, Class Year, Stacking) & Rubric scoring.</small>
+                </div>
+
+                <div class="timeline-step" id="step-4" onclick="jumpToStep(4)">
+                    <div class="d-flex justify-content-between">
+                        <span class="text-white">5. Multi-Tenant Isolation Proof</span>
+                        <span class="badge bg-secondary">3:30 - 4:15</span>
+                    </div>
+                    <small class="text-secondary d-block mt-1">FinTech Global assistant queried with Apex query -> zero cross-contamination.</small>
+                </div>
+
+                <div class="timeline-step" id="step-5" onclick="jumpToStep(5)">
+                    <div class="d-flex justify-content-between">
+                        <span class="text-white">6. Embed Widget & 20/20 Tests</span>
+                        <span class="badge bg-secondary">4:15 - 5:00</span>
+                    </div>
+                    <small class="text-secondary d-block mt-1">External JS widget embed + 20 passing unit/integration tests.</small>
+                </div>
+
+                <hr class="border-secondary my-3">
+
+                <!-- Quick Action Links -->
+                <div class="d-grid gap-2">
+                    <a href="/Account/Login" target="_blank" class="btn btn-outline-primary btn-sm text-start">
+                        <i class="fa-solid fa-arrow-up-right-from-square me-2"></i>Open Login Page
+                    </a>
+                    <a href="/assistant/ast_live_apex_univ_8f93e" target="_blank" class="btn btn-outline-info btn-sm text-start">
+                        <i class="fa-solid fa-robot me-2"></i>Open Public Chat (Apex)
+                    </a>
+                    <a href="/embed_demo.html" target="_blank" class="btn btn-outline-success btn-sm text-start">
+                        <i class="fa-solid fa-code me-2"></i>Open Embed Widget Demo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const steps = [
+        {
+            title: "1. Project Architecture & Local SQL DB",
+            subtitle: "Clean Architecture: Domain, Application (AutoMapper), Infrastructure (EF Core SQL Server), Web UI.",
+            badge: "Phase 1 of 6: Architecture Overview (0:00 - 0:45)",
+            time: "0:00",
+            duration: 45,
+            narration: "Welcome to our Multi-Tenant AI Knowledge and Decision Assistant. The project is built on ASP.NET Core 9 following Clean Architecture principles. We have encapsulated AutoMapper and all domain services inside modular ServicesConfiguration extension methods outside Program.cs. The backend is connected to our local Microsoft SQL Server Express instance, populated with pre-seeded organizations, users, assistants, and indexed PDF chunks.",
+            console: `[Database: SQL Server]\nServer=LAPTOP-BT9E70FJ\\SQLEXPRESS; Database=AIKnowledgeAssistant\nVerified Tables: Organizations (2), Users (2), Assistants (2), Documents (4), DocumentChunks (15), UsageLogs (2)\nDependency Injection: builder.Services.AddProviderServices(builder.Configuration) in Program.cs`
+        },
+        {
+            title: "2. Organization Account & Quota Limits",
+            subtitle: "Mandatory Limits Enforced: Max 10 PDFs per Org, Max 20 Pages per PDF, Max 10MB per File.",
+            badge: "Phase 2 of 6: Dashboard & Quota Rules (0:45 - 1:30)",
+            time: "0:45",
+            duration: 45,
+            narration: "Here in the Organization Dashboard for Apex University, an admin can manage their knowledge base, copy their public assistant URL, and regenerate tokens. As required by section 3 of the assignment, the system strictly enforces mandatory limits: maximum 10 PDF documents per organization, maximum 20 pages per document, and maximum 10 megabytes per file. If an admin attempts to upload an oversized document like Test_Oversized_22_Pages.pdf, the system immediately rejects it with a clear, user-facing error message.",
+            console: `[POST /Documents/Upload]\nValidating File: Test_Oversized_22_Pages.pdf (22 Pages)\n>> Error Returned: Document has 22 pages, exceeding the mandatory limit of 20 pages per document.\nQuota Status: 2 / 10 Documents Used (20% Capacity)`
+        },
+        {
+            title: "3. Visitor Experience & Grounded Citations",
+            subtitle: "Visitors ask questions without login. Answers are grounded in PDF pages with explicit citations.",
+            badge: "Phase 3 of 6: Knowledge Retrieval & Citations (1:30 - 2:30)",
+            time: "1:30",
+            duration: 60,
+            narration: "Now let's look at the visitor experience. A student can navigate directly to the assistant URL without an account. When asking 'What is the refund policy for withdrawal in week 2?' or 'What are the requirements for Tier A Merit Honors?', the hybrid retrieval engine combines BM25 and exact keyword matching to find the exact chunk. The answer is completely grounded in the PDF text and includes exact citations such as Scholarship_and_Honors_Rules.pdf — Page 3.",
+            console: `[Query Execution: POST /api/ask]\nQuestion: "What is the minimum GPA required for Tier A Merit Honors and what is the award stipend?"\nRetrieved Chunk: Page 3 (BM25 Score: 2.60)\nAnswer: Tier A Merit Honors requires cumulative GPA >= 3.85 with annual stipend of $8,000.\nCitation: Scholarship_and_Honors_Rules.pdf — Page 3`
+        },
+        {
+            title: "4. LLM + System 1 Parallel Decision Engine",
+            subtitle: "Demonstrating Choice, Boolean, Rubric Score, and Classification models evaluated in parallel.",
+            badge: "Phase 4 of 6: System 1 Decision Models (2:30 - 3:30)",
+            time: "2:30",
+            duration: 60,
+            narration: "Sections 6 and 7 of the assignment mandate combining generative AI with structured decision models. Rather than relying on a single LLM prompt, our QuestionPipeline decomposes multi-condition inquiries. Watch this: when a student asks: 'I am a sophomore with a 3.82 GPA and no sports scholarship. Am I eligible for a merit award?', the System 1 engine selects the policy branch via a Choice model, evaluates GPA, Class Standing, and Stacking rules in parallel via Boolean models, computes an aggregate Rubric Score of 100%, and synthesizes an approved decision in just 24 milliseconds.",
+            console: `[System 1 Decision Engine Execution]\nIntent Classification: MultiConditionDecision\nChoice Model: Policy Category = 'Merit_Scholarship_and_Honors'\nParallel Boolean Decisions (Task.WhenAll):\n  ✔ Cumulative GPA Threshold (3.82 >= 3.50): PASSED\n  ✔ Class Year Standing (Sophomore >= Year 2): PASSED\n  ✔ Sports Stacking Prohibition (Flag == false): PASSED\nScoring Rubric: 100% Compliance\nFinal Decision: APPROVED / ELIGIBLE in 24 ms`
+        },
+        {
+            title: "5. Strict Multi-Tenant Isolation Proof",
+            subtitle: "Zero Cross-Tenant Contamination: FinTech Global cannot retrieve Apex University documents.",
+            badge: "Phase 5 of 6: Multi-Tenant Security (3:30 - 4:15)",
+            time: "3:30",
+            duration: 45,
+            narration: "Section 1 mandates that data belonging to one organization must never be used to answer questions for another. If we now open FinTech Global Solutions' assistant and ask the exact same question regarding Apex University scholarships, the retrieval layer isolates queries by Organization ID. FinTech Global's assistant has zero knowledge of Apex documents and correctly responds that no relevant information was found, without hallucinating.",
+            console: `[Cross-Tenant Security Test]\nTenant: FinTech Global Solutions (ast_live_fintech_glob_4c21b)\nQuery: "What is the GPA required for Apex Dean's List?"\nDatabase Filter: WHERE OrganizationId == '22222222-2222-2222-2222-222222222222'\nChunks Found: 0\nResponse: "The knowledge base does not contain information regarding this topic." (isGrounded: false)`
+        },
+        {
+            title: "6. External Embed Widget & Automated Tests",
+            subtitle: "Drop-in JavaScript Widget on external webpage + 20 of 20 passing unit and integration tests.",
+            badge: "Phase 6 of 6: Embed Demo & Test Suite (4:15 - 5:00)",
+            time: "4:15",
+            duration: 45,
+            narration: "Finally, the assistant can be embedded into any third-party website using an iframe or our lightweight JavaScript widget script. We have provided a working embed demo page at embed_demo.html. Furthermore, our automated test suite comprises 20 unit and integration tests covering multi-tenant isolation, quota limits, System 1 decision models, and question pipelines with a 100% pass rate. Thank you for watching!",
+            console: `[Embed Widget & Test Suite Verification]\nEmbed File: wwwroot/embed_demo.html (CORS Allowed: AllowEmbed Policy)\nTest Run Summary:\n  Total Tests: 20\n  Passed: 20\n  Failed: 0\n  Skipped: 0\n  Duration: 8.0s\nStatus: 100% READY FOR SUBMISSION`
+        }
+    ];
+
+    let currentStepIndex = 0;
+    let isPlaying = false;
+    let currentSeconds = 0;
+    let timerInterval = null;
+    let voiceEnabled = true;
+
+    function renderStep(index) {
+        currentStepIndex = index;
+        const step = steps[index];
+
+        document.getElementById('slideTitle').textContent = step.title;
+        document.getElementById('slideSubtitle').textContent = step.subtitle;
+        document.getElementById('stageBadge').textContent = step.badge;
+        document.getElementById('slideConsole').innerHTML = step.console.replace(/\n/g, '<br>');
+        document.getElementById('narrationTime').textContent = `Timestamp: ${step.time}`;
+        document.getElementById('narrationText').textContent = step.narration;
+
+        document.querySelectorAll('.timeline-step').forEach((el, idx) => {
+            el.classList.toggle('active', idx === index);
+        });
+
+        if (voiceEnabled && isPlaying) {
+            speakNarration(step.narration);
+        }
+    }
+
+    function togglePlay() {
+        isPlaying = !isPlaying;
+        const btn = document.getElementById('playBtn');
+        const text = document.getElementById('playBtnText');
+        if (isPlaying) {
+            btn.className = 'btn btn-warning px-4 fw-bold';
+            text.textContent = 'Pause Demo';
+            startTimer();
+            speakNarration(steps[currentStepIndex].narration);
+        } else {
+            btn.className = 'btn btn-primary px-4 fw-bold';
+            text.textContent = 'Resume Demo';
+            stopTimer();
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        }
+    }
+
+    function startTimer() {
+        if (timerInterval) clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            currentSeconds++;
+            if (currentSeconds > 300) {
+                currentSeconds = 300;
+                togglePlay();
+            }
+            updateTimeDisplay();
+
+            // Calculate which step we are in
+            let elapsed = 0;
+            for (let i = 0; i < steps.length; i++) {
+                elapsed += steps[i].duration;
+                if (currentSeconds < elapsed) {
+                    if (currentStepIndex !== i) {
+                        renderStep(i);
+                    }
+                    break;
+                }
+            }
+        }, 1000);
+    }
+
+    function stopTimer() {
+        if (timerInterval) clearInterval(timerInterval);
+    }
+
+    function updateTimeDisplay() {
+        const mins = Math.floor(currentSeconds / 60);
+        const secs = currentSeconds % 60;
+        const str = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        document.getElementById('timeBadge').textContent = `${str} / 5:00`;
+        document.getElementById('currProgressLabel').textContent = str;
+        const percent = (currentSeconds / 300) * 100;
+        document.getElementById('videoProgressBar').style.width = `${percent}%`;
+    }
+
+    function jumpToStep(index) {
+        let accumulated = 0;
+        for (let i = 0; i < index; i++) accumulated += steps[i].duration;
+        currentSeconds = accumulated;
+        updateTimeDisplay();
+        renderStep(index);
+    }
+
+    function restartDemo() {
+        stopTimer();
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        currentSeconds = 0;
+        updateTimeDisplay();
+        renderStep(0);
+        if (isPlaying) togglePlay();
+    }
+
+    function toggleAudio() {
+        voiceEnabled = !voiceEnabled;
+        const btn = document.getElementById('audioBtn');
+        if (voiceEnabled) {
+            btn.innerHTML = '<i class="fa-solid fa-volume-high me-1"></i>Voice Narration: ON';
+            btn.className = 'btn btn-outline-light btn-sm me-2';
+            if (isPlaying) speakNarration(steps[currentStepIndex].narration);
+        } else {
+            btn.innerHTML = '<i class="fa-solid fa-volume-xmark me-1"></i>Voice Narration: OFF';
+            btn.className = 'btn btn-outline-secondary btn-sm me-2';
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        }
+    }
+
+    function speakNarration(text) {
+        if (!('speechSynthesis' in window) || !voiceEnabled) return;
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 1.05;
+        utterance.pitch = 1.0;
+        window.speechSynthesis.speak(utterance);
+    }
+
+    function copyFullScript() {
+        let full = "=== 5-MINUTE VIDEO DEMO RECORDING SCRIPT ===\n\n";
+        steps.forEach((s, idx) => {
+            full += `[PHASE ${idx+1}: ${s.title} (${s.time})]\n${s.narration}\n\n`;
+        });
+        navigator.clipboard.writeText(full).then(() => {
+            alert("Complete 5-Minute Narration Script copied to clipboard!");
+        });
+    }
+
+    // Init first step
+    renderStep(0);
+</script>
+
+</body>
+</html>

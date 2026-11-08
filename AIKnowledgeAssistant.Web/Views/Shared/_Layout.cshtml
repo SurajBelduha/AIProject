@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - AI Knowledge & Decision Assistant</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-light: #eef2ff;
+            --surface: #ffffff;
+            --background: #f8fafc;
+            --border: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--background);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar-custom {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border);
+            padding: 0.85rem 1.5rem;
+        }
+        .navbar-brand {
+            font-weight: 800;
+            color: var(--primary) !important;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+        .nav-link {
+            font-weight: 600;
+            color: var(--text-muted);
+            padding: 0.5rem 0.85rem;
+            border-radius: 8px;
+            transition: all 0.15s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary);
+            background-color: var(--primary-light);
+        }
+        .card-custom {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03), 0 1px 2px rgba(0,0,0,0.02);
+            transition: box-shadow 0.2s ease;
+        }
+        .card-custom:hover {
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+        }
+        .badge-tenant {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid rgba(79, 70, 229, 0.2);
+            font-weight: 700;
+            padding: 0.4rem 0.85rem;
+            border-radius: 20px;
+        }
+        .btn-primary-custom {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: #ffffff;
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 0.5rem 1.1rem;
+            transition: all 0.15s ease;
+        }
+        .btn-primary-custom:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+            color: #ffffff;
+        }
+        footer {
+            margin-top: auto;
+            border-top: 1px solid var(--border);
+            background-color: #ffffff;
+            padding: 1.25rem 0;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+    </style>
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-cpu-fill text-primary"></i>
+                <span>DecisionMind <span class="badge bg-primary-subtle text-primary ms-1" style="font-size:0.65rem; font-weight:700;">MVP</span></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")" href="/Dashboard">
+                                <i class="bi bi-speedometer2 me-1"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Documents" ? "active" : "")" href="/Documents">
+                                <i class="bi bi-file-earmark-pdf me-1"></i> Knowledge Base
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="badge-tenant">
+                            <i class="bi bi-building me-1"></i> @(User.FindFirst("OrganizationName")?.Value ?? "Organization")
+                        </span>
+                        <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline m-0">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                                <i class="bi bi-box-arrow-right me-1"></i> Logout
+                            </button>
+                        </form>
+                    </div>
+                }
+                else
+                {
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center gap-2">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Account/Login">Sign In</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-primary-custom btn-sm" href="/Account/Register">Get Started</a>
+                        </li>
+                    </ul>
+                }
+            </div>
+        </div>
+    </nav>
+
+    <main class="container-fluid py-4 flex-grow-1 px-lg-5">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show rounded-3 mb-4 shadow-sm" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show rounded-3 mb-4 shadow-sm" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @RenderBody()
+    </main>
+
+    <footer>
+        <div class="container-fluid px-lg-5 text-center text-md-between d-md-flex justify-content-between">
+            <div>
+                <strong>AI Knowledge & Decision Assistant</strong> — Multi-Tenant MVP with Hybrid Retrieval & System 1 Models
+            </div>
+            <div class="mt-2 mt-md-0">
+                <span class="badge bg-secondary-subtle text-secondary me-2">Isolated Tenants</span>
+                <span class="badge bg-success-subtle text-success">Decision Models Active</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <BuildInParallel>false</BuildInParallel>
+    <UseSharedCompilation>false</UseSharedCompilation>
+    <MaxCpuCount>1</MaxCpuCount>
+  </PropertyGroup>
+</Project>

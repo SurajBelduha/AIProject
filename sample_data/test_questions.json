@@ -1,0 +1,110 @@
+[
+  {
+    "id": 1,
+    "organization": "Apex University",
+    "category": "Direct Information",
+    "question": "What is the minimum GPA required for Tier A Merit Honors and what is the award stipend?",
+    "expectedDecision": "Intent: DirectInformation, Category: Scholarship_and_Honors_Rules",
+    "expectedAnswerContains": "3.85 or higher",
+    "citation": "Scholarship_and_Honors_Rules.pdf — Page 3"
+  },
+  {
+    "id": 2,
+    "organization": "Apex University",
+    "category": "Policy",
+    "question": "Can a student receive both a merit scholarship and an active athletic scholarship at the same time?",
+    "expectedDecision": "Intent: PolicyInquiry, Stacking Rule: Disallowed",
+    "expectedAnswerContains": "cannot stack",
+    "citation": "Scholarship_and_Honors_Rules.pdf — Page 4"
+  },
+  {
+    "id": 3,
+    "organization": "Apex University",
+    "category": "Procedural",
+    "question": "What is the deadline and procedure for appealing a final course grade?",
+    "expectedDecision": "Intent: Procedural, Timeline: 14 days",
+    "expectedAnswerContains": "14 calendar days",
+    "citation": "Academic_Integrity_and_Grading.pdf — Page 2"
+  },
+  {
+    "id": 4,
+    "organization": "Apex University",
+    "category": "Multi-Condition Decision",
+    "question": "I am a sophomore with a 3.82 cumulative GPA and no sports scholarship. Am I eligible for a merit award and Dean's List?",
+    "expectedDecision": "Intent: MultiConditionDecision, Standing: Passed (>= 2), GPA: Passed (3.82 >= 3.50), Stacking: Passed, Result: APPROVED (Tier B / $5,000)",
+    "expectedAnswerContains": "APPROVED / ELIGIBLE",
+    "citation": "Scholarship_and_Honors_Rules.pdf — Page 3"
+  },
+  {
+    "id": 5,
+    "organization": "Apex University",
+    "category": "Multi-Condition Decision (Failing)",
+    "question": "I am a freshman with a 3.9 GPA and no athletic scholarship. Do I qualify for the merit scholarship?",
+    "expectedDecision": "Intent: MultiConditionDecision, Standing: Failed (Freshman < Sophomore Year 2 requirement), Result: REJECTED / NOT ELIGIBLE",
+    "expectedAnswerContains": "NOT ELIGIBLE",
+    "citation": "Scholarship_and_Honors_Rules.pdf — Page 2"
+  },
+  {
+    "id": 6,
+    "organization": "Apex University",
+    "category": "Out-of-Scope / No Answer",
+    "question": "What are the campus cafeteria lunch hours on weekends?",
+    "expectedDecision": "Intent: DirectInformation, Grounded: False",
+    "expectedAnswerContains": "does not contain information",
+    "citation": null
+  },
+  {
+    "id": 7,
+    "organization": "FinTech Global Solutions",
+    "category": "Direct Information",
+    "question": "What is the maximum home office equipment setup stipend amount and renewal frequency?",
+    "expectedDecision": "Intent: DirectInformation, Category: Remote_Work_and_Equipment_Policy",
+    "expectedAnswerContains": "$1,200.00 every 24 months",
+    "citation": "Remote_Work_and_Equipment_Policy.pdf — Page 3"
+  },
+  {
+    "id": 8,
+    "organization": "FinTech Global Solutions",
+    "category": "Policy",
+    "question": "What is the daily per diem meal allowance during business travel, and can alcohol be expensed?",
+    "expectedDecision": "Intent: PolicyInquiry, Category: Travel_and_Expense_Guidelines",
+    "expectedAnswerContains": "$75.00",
+    "citation": "Travel_and_Expense_Guidelines.pdf — Page 1"
+  },
+  {
+    "id": 9,
+    "organization": "FinTech Global Solutions",
+    "category": "Multi-Condition Decision",
+    "question": "I have been with FinTech Global for 8 continuous months and need to buy a home office desk for $850. Am I eligible?",
+    "expectedDecision": "Intent: MultiConditionDecision, Tenure: Passed (8 >= 6 months), Amount: Passed ($850 <= $1,200), Result: APPROVED",
+    "expectedAnswerContains": "APPROVED / ELIGIBLE",
+    "citation": "Remote_Work_and_Equipment_Policy.pdf — Page 2"
+  },
+  {
+    "id": 10,
+    "organization": "FinTech Global Solutions",
+    "category": "Multi-Condition Decision (Failing)",
+    "question": "I have been employed for 2 months and want to work remotely from France for 45 days. Can this be approved?",
+    "expectedDecision": "Intent: MultiConditionDecision, Tenure: Failed (2 < 6 months), International Duration: Failed (45 > 30 days max), Result: REJECTED",
+    "expectedAnswerContains": "REJECTED",
+    "citation": "Remote_Work_and_Equipment_Policy.pdf — Page 4"
+  },
+  {
+    "id": 11,
+    "organization": "FinTech Global Solutions",
+    "category": "Comparison",
+    "question": "Compare the flight travel class rules for domestic flights under 5 hours versus international flights over 8 hours.",
+    "expectedDecision": "Intent: ComparativeAnalysis, Category: Travel_and_Expense_Guidelines",
+    "expectedAnswerContains": "Economy vs Business",
+    "citation": "Travel_and_Expense_Guidelines.pdf — Page 2"
+  },
+  {
+    "id": 12,
+    "organization": "FinTech Global Solutions",
+    "category": "Out-of-Scope / No Answer",
+    "question": "What is the company policy regarding bringing dogs into the corporate headquarters?",
+    "expectedDecision": "Intent: DirectInformation, Grounded: False",
+    "expectedAnswerContains": "does not contain information",
+    "citation": null
+  }
+]

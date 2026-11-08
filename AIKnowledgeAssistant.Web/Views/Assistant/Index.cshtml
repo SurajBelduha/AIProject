@@ -1,0 +1,320 @@
+@{
+    Layout = ViewBag.IsEmbed ? null : "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = ViewBag.AssistantName;
+    var isEmbed = (bool)ViewBag.IsEmbed;
+    var token = (string)ViewBag.Token;
+    var orgName = (string)ViewBag.OrganizationName;
+    var assistantName = (string)ViewBag.AssistantName;
+}
+
+@if (isEmbed)
+{
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@assistantName</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        @RenderChatBody(token, orgName, assistantName, true)
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    @RenderChatScripts(token)
+</body>
+</html>
+}
+else
+{
+<div class="row justify-content-center py-2">
+    <div class="col-lg-9 col-xl-8">
+        <div class="card card-custom shadow-sm overflow-hidden" style="height: calc(100vh - 170px); min-height: 600px;">
+            @RenderChatBody(token, orgName, assistantName, false)
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @RenderChatScripts(token)
+}
+}
+
+@functions {
+    public Microsoft.AspNetCore.Html.IHtmlContent RenderChatBody(string token, string orgName, string assistantName, bool isEmbed)
+    {
+        var html = $@"
+        <div class=""d-flex flex-column h-100"">
+            <!-- Header -->
+            <div class=""p-3 border-bottom bg-white d-flex justify-content-between align-items-center shadow-sm"">
+                <div class=""d-flex align-items-center gap-2"">
+                    <div class=""bg-primary text-white rounded-circle p-2 d-flex align-items-center justify-content-center"" style=""width:40px; height:40px;"">
+                        <i class=""bi bi-robot fs-5""></i>
+                    </div>
+                    <div>
+                        <h6 class=""fw-bold mb-0"">{assistantName}</h6>
+                        <span class=""text-muted small"" style=""font-size:0.75rem;"">
+                            <i class=""bi bi-building me-1""></i> {orgName} &bull; <span class=""text-success""><i class=""bi bi-circle-fill"" style=""font-size:0.5rem;""></i> Online</span>
+                        </span>
+                    </div>
+                </div>
+                <div>
+                    <span class=""badge bg-primary-subtle text-primary border border-primary-subtle"">
+                        System 1 + Hybrid Grounding
+                    </span>
+                </div>
+            </div>
+
+            <!-- Messages Area -->
+            <div class=""flex-grow-1 p-3 overflow-auto bg-light"" id=""chatMessages"">
+                <!-- Welcome Message -->
+                <div class=""d-flex gap-2 mb-3"">
+                    <div class=""bg-primary text-white rounded-circle p-1 d-flex align-items-center justify-content-center flex-shrink-0"" style=""width:32px; height:32px;"">
+                        <i class=""bi bi-robot""></i>
+                    </div>
+                    <div class=""card p-3 shadow-xs border-0 bg-white rounded-3"" style=""max-width: 85%;"">
+                        <p class=""mb-2"">Hello! I am the official AI assistant for <strong>{orgName}</strong>. You can ask me any policy, procedural, or eligibility questions grounded in our verified documents.</p>
+                        <span class=""text-muted small fw-semibold d-block mb-1"">Try asking:</span>
+                        <div class=""d-flex flex-wrap gap-1"">
+                            <button type=""button"" class=""btn btn-xs btn-outline-primary small py-1 px-2"" style=""font-size:0.75rem;"" onclick=""sendSuggestedQuestion('I am a 3rd year student with a 3.7 GPA and an active sports scholarship. Am I eligible for a merit scholarship?')'"" id=""btnSample1"">
+                                Multi-Condition Eligibility
+                            </button>
+                            <button type=""button"" class=""btn btn-xs btn-outline-secondary small py-1 px-2"" style=""font-size:0.75rem;"" onclick=""sendSuggestedQuestion('What is the minimum requirement for general scholarships?')"" id=""btnSample2"">
+                                Policy Requirements
+                            </button>
+                            <button type=""button"" class=""btn btn-xs btn-outline-secondary small py-1 px-2"" style=""font-size:0.75rem;"" onclick=""sendSuggestedQuestion('What is the procedure for an appeal or request?')"" id=""btnSample3"">
+                                Procedural Steps
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Bar -->
+            <div class=""p-3 bg-white border-top"">
+                <form id=""chatForm"" onsubmit=""handleChatSubmit(event)"">
+                    <div class=""input-group"">
+                        <input type=""text"" id=""userQuestionInput"" class=""form-control rounded-start-pill px-3"" placeholder=""Ask a natural-language question..."" autocomplete=""off"" required />
+                        <button class=""btn btn-primary-custom rounded-end-pill px-4"" type=""submit"" id=""btnSendMessage"">
+                            <i class=""bi bi-send-fill""></i>
+                        </button>
+                    </div>
+                    <div class=""d-flex justify-content-between mt-2 px-2"">
+                        <span class=""text-muted"" style=""font-size:0.7rem;"">Answers grounded in {orgName} knowledge base.</span>
+                        <span class=""text-muted"" style=""font-size:0.7rem;"">No login required &bull; Private session</span>
+                    </div>
+                </form>
+            </div>
+        </div>";
+        return new Microsoft.AspNetCore.Html.HtmlString(html);
+    }
+
+    public Microsoft.AspNetCore.Html.IHtmlContent RenderChatScripts(string token)
+    {
+        var script = $@"
+        <script>
+            var assistantToken = '{token}';
+
+            function sendSuggestedQuestion(q) {{
+                document.getElementById('userQuestionInput').value = q;
+                handleChatSubmit(new Event('submit'));
+            }}
+
+            async function handleChatSubmit(e) {{
+                if (e) e.preventDefault();
+                var input = document.getElementById('userQuestionInput');
+                var question = input.value.trim();
+                if (!question) return;
+
+                input.value = '';
+                appendUserMessage(question);
+
+                var sendBtn = document.getElementById('btnSendMessage');
+                sendBtn.disabled = true;
+
+                var loadingId = appendLoadingIndicator();
+                scrollToBottom();
+
+                try {{
+                    var response = await fetch('/api/ask', {{
+                        method: 'POST',
+                        headers: {{
+                            'Content-Type': 'application/json',
+                            'X-Assistant-Token': assistantToken
+                        }},
+                        body: JSON.stringify({{ question: question }})
+                    }});
+
+                    var res = await response.json();
+                    removeLoadingIndicator(loadingId);
+
+                    if (!res.success) {{
+                        appendErrorMessage(res.error || 'Failed to retrieve response.');
+                    }} else {{
+                        appendAssistantResponse(res.data);
+                    }}
+                }} catch (err) {{
+                    removeLoadingIndicator(loadingId);
+                    appendErrorMessage('Network or server error: ' + err.message);
+                }} finally {{
+                    sendBtn.disabled = false;
+                    scrollToBottom();
+                }}
+            }}
+
+            function appendUserMessage(text) {{
+                var container = document.getElementById('chatMessages');
+                var div = document.createElement('div');
+                div.className = 'd-flex justify-content-end mb-3';
+                div.innerHTML = `
+                    <div class='bg-primary text-white p-3 rounded-3 shadow-xs' style='max-width: 80%;'>
+                        <div class='small'>${{escapeHtml(text)}}</div>
+                    </div>`;
+                container.appendChild(div);
+            }}
+
+            function appendAssistantResponse(data) {{
+                var container = document.getElementById('chatMessages');
+                var div = document.createElement('div');
+                div.className = 'd-flex gap-2 mb-3';
+
+                // Format Decision Trace if present
+                var decisionHtml = '';
+                var dt = data.decisionTrace;
+                if (dt && dt.decisions && dt.decisions.length > 0) {{
+                    var decItems = dt.decisions.map(d => {{
+                        var badge = d.isPassed === true 
+                            ? '<span class=""badge bg-success ms-2"">Passed</span>' 
+                            : (d.isPassed === false ? '<span class=""badge bg-danger ms-2"">Failed</span>' : `<span class=""badge bg-info ms-2"">${{d.resultValue}}</span>`);
+                        return `
+                            <li class=""list-group-item d-flex justify-content-between align-items-center px-2 py-1 small"">
+                                <div>
+                                    <strong>${{escapeHtml(d.description || d.name)}}</strong>
+                                    <div class=""text-muted"" style=""font-size:0.75rem;"">${{escapeHtml(d.rationale)}}</div>
+                                </div>
+                                ${{badge}}
+                            </li>`;
+                    }}).join('');
+
+                    var statusBadge = dt.overallEligibility
+                        ? '<span class=""badge bg-success""><i class=""bi bi-check-circle me-1""></i> Eligible</span>'
+                        : '<span class=""badge bg-danger""><i class=""bi bi-x-circle me-1""></i> Ineligible</span>';
+
+                    decisionHtml = `
+                        <div class=""accordion mb-3"" id=""decAccordion_${{Date.now()}}"">
+                            <div class=""accordion-item border-primary-subtle"">
+                                <h2 class=""accordion-header"">
+                                    <button class=""accordion-button collapsed py-2 px-3 small bg-primary-subtle text-primary fw-semibold"" type=""button"" data-bs-toggle=""collapse"" data-bs-target=""#decCollapse_${{Date.now()}}"">
+                                        <i class=""bi bi-cpu-fill me-2""></i> System 1 Decision Model: ${{statusBadge}}
+                                    </button>
+                                </h2>
+                                <div id=""decCollapse_${{Date.now()}}"" class=""accordion-collapse collapse"">
+                                    <div class=""accordion-body p-2"">
+                                        <div class=""small mb-2 fw-semibold"">${{escapeHtml(dt.summary)}}</div>
+                                        <ul class=""list-group list-group-flush"">${{decItems}}</ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                }}
+
+                // Format References with page numbers
+                var refsHtml = '';
+                if (data.references && data.references.length > 0) {{
+                    var refBadges = data.references.map(r => `
+                        <span class=""badge bg-light text-dark border p-2 me-1 mb-1 d-inline-block text-start"">
+                            <i class=""bi bi-file-earmark-pdf-fill text-danger me-1""></i>
+                            <strong>${{escapeHtml(r.formattedCitation)}}</strong>
+                        </span>`).join('');
+                    refsHtml = `<div class=""mt-3 pt-2 border-top""><span class=""small text-muted fw-bold d-block mb-1"">Document Citations:</span><div class=""d-flex flex-wrap"">${{refBadges}}</div></div>`;
+                }}
+
+                div.innerHTML = `
+                    <div class=""bg-primary text-white rounded-circle p-1 d-flex align-items-center justify-content-center flex-shrink-0"" style=""width:32px; height:32px;"">
+                        <i class=""bi bi-robot""></i>
+                    </div>
+                    <div class=""card p-3 shadow-xs border-0 bg-white rounded-3"" style=""max-width: 85%;"">
+                        ${{decisionHtml}}
+                        <div class=""small"" style=""white-space: pre-line;"">${{escapeHtml(data.answer)}}</div>
+                        ${{refsHtml}}
+                    </div>`;
+
+                container.appendChild(div);
+            }}
+
+            function appendErrorMessage(msg) {{
+                var container = document.getElementById('chatMessages');
+                var div = document.createElement('div');
+                div.className = 'd-flex gap-2 mb-3';
+                div.innerHTML = `
+                    <div class=""bg-danger text-white rounded-circle p-1 d-flex align-items-center justify-content-center flex-shrink-0"" style=""width:32px; height:32px;"">
+                        <i class=""bi bi-exclamation-triangle""></i>
+                    </div>
+                    <div class=""card p-3 border-danger-subtle bg-danger-subtle rounded-3 text-danger small"" style=""max-width: 85%;"">
+                        <strong>Error:</strong> ${{escapeHtml(msg)}}
+                    </div>`;
+                container.appendChild(div);
+            }}
+
+            function appendLoadingIndicator() {{
+                var id = 'loading_' + Date.now();
+                var container = document.getElementById('chatMessages');
+                var div = document.createElement('div');
+                div.id = id;
+                div.className = 'd-flex gap-2 mb-3';
+                div.innerHTML = `
+                    <div class=""bg-primary text-white rounded-circle p-1 d-flex align-items-center justify-content-center flex-shrink-0"" style=""width:32px; height:32px;"">
+                        <i class=""bi bi-robot""></i>
+                    </div>
+                    <div class=""card p-3 border-0 bg-white rounded-3 shadow-xs"">
+                        <div class=""d-flex align-items-center gap-2 small text-muted"">
+                            <span class=""spinner-border spinner-border-sm text-primary"" role=""status""></span>
+                            <span>Evaluating knowledge base & decision models...</span>
+                        </div>
+                    </div>`;
+                container.appendChild(div);
+                return id;
+            }}
+
+            function removeLoadingIndicator(id) {{
+                var el = document.getElementById(id);
+                if (el) el.remove();
+            }}
+
+            function scrollToBottom() {{
+                var container = document.getElementById('chatMessages');
+                container.scrollTop = container.scrollHeight;
+            }}
+
+            function escapeHtml(str) {{
+                if (!str) return '';
+                return str
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/""/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }}
+        </script>";
+        return new Microsoft.AspNetCore.Html.HtmlString(script);
+    }
+}

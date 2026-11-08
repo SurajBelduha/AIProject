@@ -1,0 +1,413 @@
+@model AIKnowledgeAssistant.Application.DTOs.DashboardStatsDto
+@{
+    ViewData["Title"] = "Organization Dashboard";
+    var docPercentage = Math.Min(100, (int)((double)Model.DocumentCount / Model.MaxDocuments * 100));
+}
+
+<div class="row align-items-center mb-4">
+    <div class="col-md-7">
+        <h2 class="fw-bold mb-1">@Model.OrganizationName</h2>
+        <p class="text-muted mb-0">Tenant Knowledge Base, Public Assistant Deployment, & System 1 Decision Metrics</p>
+    </div>
+    <div class="col-md-5 text-md-end mt-3 mt-md-0 d-flex gap-2 justify-content-md-end">
+        <a href="/Documents" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+            <i class="bi bi-file-earmark-plus me-1"></i> Manage Documents
+        </a>
+        <a href="@Model.AssistantPublicUrl" target="_blank" class="btn btn-primary-custom btn-sm rounded-pill px-3">
+            <i class="bi bi-box-arrow-up-right me-1"></i> Open Public Chat
+        </a>
+    </div>
+</div>
+
+<!-- Key Performance Metrics Row -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-lg-3">
+        <div class="card card-custom p-3 h-100">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <span class="text-muted small fw-semibold">Knowledge Base Quota</span>
+                    <h3 class="fw-bold my-1">@Model.DocumentCount <span class="fs-6 text-muted fw-normal">/ @Model.MaxDocuments PDFs</span></h3>
+                </div>
+                <div class="p-2 bg-primary-subtle text-primary rounded-3">
+                    <i class="bi bi-file-pdf fs-4"></i>
+                </div>
+            </div>
+            <div class="progress mt-2" style="height: 6px;">
+                <div class="progress-bar @(docPercentage >= 90 ? "bg-danger" : "bg-primary")" role="progressbar" style="width: @docPercentage%"></div>
+            </div>
+            <span class="text-muted small mt-2">@Model.TotalPages total pages indexed</span>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3">
+        <div class="card card-custom p-3 h-100">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <span class="text-muted small fw-semibold">Questions Processed</span>
+                    <h3 class="fw-bold my-1">@Model.TotalQuestions</h3>
+                </div>
+                <div class="p-2 bg-info-subtle text-info rounded-3">
+                    <i class="bi bi-chat-dots fs-4"></i>
+                </div>
+            </div>
+            <span class="text-muted small mt-auto">Total visitor questions asked</span>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3">
+        <div class="card card-custom p-3 h-100">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <span class="text-muted small fw-semibold">Grounded Answers</span>
+                    <h3 class="fw-bold my-1 text-success">@Model.AnsweredQuestions</h3>
+                </div>
+                <div class="p-2 bg-success-subtle text-success rounded-3">
+                    <i class="bi bi-check-circle fs-4"></i>
+                </div>
+            </div>
+            <span class="text-muted small mt-auto">Answers verified by document pages</span>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3">
+        <div class="card card-custom p-3 h-100">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <span class="text-muted small fw-semibold">Human Review / Out-of-KB</span>
+                    <h3 class="fw-bold my-1 text-warning">@Model.HumanReviewCount</h3>
+                </div>
+                <div class="p-2 bg-warning-subtle text-warning rounded-3">
+                    <i class="bi bi-shield-exclamation fs-4"></i>
+                </div>
+            </div>
+            <span class="text-muted small mt-auto">Unindexed or out-of-domain queries</span>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Assistant Token & Embed Code Management -->
+    <div class="col-lg-6">
+        <div class="card card-custom p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0">
+                    <i class="bi bi-key-fill text-primary me-2"></i> Assistant URL & Deployment Token
+                </h5>
+                <form asp-action="RegenerateToken" method="post" onsubmit="return confirm('Regenerating this token will immediately invalidate previous embed links. Are you sure?');">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill">
+                        <i class="bi bi-arrow-clockwise me-1"></i> Regenerate Token
+                    </button>
+                </form>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label small fw-semibold text-muted">Public Assistant URL (No Visitor Login Required)</label>
+                <div class="input-group">
+                    <input type="text" id="assistantUrlInput" class="form-control font-monospace small bg-light" value="@Model.AssistantPublicUrl" readonly />
+                    <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('assistantUrlInput', this)">
+                        <i class="bi bi-clipboard"></i> Copy
+                    </button>
+                    <a href="@Model.AssistantPublicUrl" target="_blank" class="btn btn-outline-primary">
+                        <i class="bi bi-box-arrow-up-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label small fw-semibold text-muted">Active Tenant Token</label>
+                <div class="input-group">
+                    <input type="text" id="tokenInput" class="form-control font-monospace small bg-light" value="@Model.AssistantToken" readonly />
+                    <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('tokenInput', this)">
+                        <i class="bi bi-clipboard"></i> Copy
+                    </button>
+                </div>
+            </div>
+
+            <hr class="my-4" />
+
+            <h6 class="fw-bold mb-3"><i class="bi bi-code-slash text-primary me-2"></i> Embed Into External Web Pages</h6>
+
+            <ul class="nav nav-pills mb-3" id="embedTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active btn-sm" id="iframe-tab" data-bs-toggle="pill" data-bs-target="#iframe-content" type="button" role="tab">Iframe Embed</button>
+                </li>
+                <li class="nav-item ms-2" role="presentation">
+                    <button class="nav-link btn-sm" id="script-tab" data-bs-toggle="pill" data-bs-target="#script-content" type="button" role="tab">JavaScript Widget</button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="embedTabsContent">
+                <div class="tab-pane fade show active" id="iframe-content" role="tabpanel">
+                    <div class="position-relative">
+                        <textarea id="iframeCodeArea" class="form-control font-monospace small bg-light" rows="3" readonly>@Model.EmbedIframeCode</textarea>
+                        <button class="btn btn-sm btn-dark position-absolute top-0 end-0 m-2" onclick="copyToClipboard('iframeCodeArea', this)">
+                            <i class="bi bi-clipboard me-1"></i> Copy Code
+                        </button>
+                    </div>
+                    <span class="text-muted small mt-1 d-block">Paste into any HTML page to embed the responsive chat interface.</span>
+                </div>
+
+                <div class="tab-pane fade" id="script-content" role="tabpanel">
+                    <div class="position-relative">
+                        <textarea id="scriptCodeArea" class="form-control font-monospace small bg-light" rows="3" readonly>@Model.EmbedScriptCode</textarea>
+                        <button class="btn btn-sm btn-dark position-absolute top-0 end-0 m-2" onclick="copyToClipboard('scriptCodeArea', this)">
+                            <i class="bi bi-clipboard me-1"></i> Copy Code
+                        </button>
+                    </div>
+                    <span class="text-muted small mt-1 d-block">Injects a floating interactive assistant widget into any external website.</span>
+                </div>
+            </div>
+            
+            <div class="mt-3 text-end">
+                <a href="/embed_demo.html" target="_blank" class="text-decoration-none small fw-semibold">
+                    <i class="bi bi-window-fullscreen me-1"></i> View External Web Page Demo &rarr;
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Decision Playground & Pipeline Tester -->
+    <div class="col-lg-6">
+        <div class="card card-custom p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="fw-bold mb-0">
+                    <i class="bi bi-diagram-3-fill text-primary me-2"></i> Interactive Pipeline Tester
+                </h5>
+                <span class="badge bg-primary-subtle text-primary">System 1 + LLM</span>
+            </div>
+            <p class="text-muted small mb-3">Execute questions through this organization's isolated knowledge base to observe Question Understanding, System 1 Decisions, and Grounded Output.</p>
+
+            <div class="mb-3">
+                <div class="input-group">
+                    <input type="text" id="playgroundQuestion" class="form-control" placeholder="Ask a policy, eligibility, or factual question..." />
+                    <button class="btn btn-primary-custom" id="btnRunTest" type="button" onclick="runPlaygroundTest()">
+                        <i class="bi bi-play-fill me-1"></i> Execute
+                    </button>
+                </div>
+            </div>
+
+            <!-- Starter Sample Buttons -->
+            <div class="mb-3">
+                <span class="small text-muted d-block mb-1">Click a sample scenario:</span>
+                <div class="d-flex flex-wrap gap-1">
+                    @if (Model.OrganizationName.Contains("Apex", StringComparison.OrdinalIgnoreCase))
+                    {
+                        <button type="button" class="btn btn-xs btn-outline-secondary small" style="font-size:0.75rem;" onclick="setPlaygroundQuestion('I am a 3rd year student with a 3.7 GPA and an active sports scholarship. Am I eligible for a merit scholarship?')">
+                            Multi-Condition: GPA 3.7 + Sports Scholarship
+                        </button>
+                        <button type="button" class="btn btn-xs btn-outline-secondary small" style="font-size:0.75rem;" onclick="setPlaygroundQuestion('What is the deadline and procedure for filing a grade appeal?')">
+                            Procedural: Grade Appeal
+                        </button>
+                        <button type="button" class="btn btn-xs btn-outline-secondary small" style="font-size:0.75rem;" onclick="setPlaygroundQuestion('What is the weather in Tokyo today?')">
+                            Out-of-KB Question
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-xs btn-outline-secondary small" style="font-size:0.75rem;" onclick="setPlaygroundQuestion('Can I get the $1200 home office stipend if I have been with the company for 8 months?')">
+                            Multi-Condition: Remote Stipend + 8 Mos Tenure
+                        </button>
+                        <button type="button" class="btn btn-xs btn-outline-secondary small" style="font-size:0.75rem;" onclick="setPlaygroundQuestion('Can I book business class for a 4 hour flight?')">
+                            Policy: Domestic Airfare Rules
+                        </button>
+                        <button type="button" class="btn btn-xs btn-outline-secondary small" style="font-size:0.75rem;" onclick="setPlaygroundQuestion('Who won the 1994 world cup?')">
+                            Out-of-KB Question
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <!-- Playground Output Container -->
+            <div id="playgroundOutput" class="border rounded-3 p-3 bg-light overflow-auto flex-grow-1" style="min-height: 250px; max-height: 380px;">
+                <div class="text-center text-muted py-5">
+                    <i class="bi bi-cpu fs-1 opacity-50 mb-2 d-block"></i>
+                    <span>Enter a question above or click a sample scenario to inspect the live decision flow.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Query Audit Logs Table -->
+<div class="card card-custom p-4 mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold mb-0">
+            <i class="bi bi-clock-history text-primary me-2"></i> Recent Assistant Inquiries & System 1 Traces
+        </h5>
+        <span class="text-muted small">Real-time audit log of visitor interactions</span>
+    </div>
+
+    @if (Model.RecentQuestions.Count == 0)
+    {
+        <div class="text-center text-muted py-4">
+            <i class="bi bi-inbox fs-2 opacity-50 mb-2 d-block"></i>
+            <span>No questions have been asked yet. Try asking one in the playground above or via the public assistant!</span>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light small">
+                    <tr>
+                        <th style="width: 25%;">Question</th>
+                        <th style="width: 15%;">Intent / Category</th>
+                        <th style="width: 40%;">Answer Preview</th>
+                        <th style="width: 10%;">Grounded</th>
+                        <th style="width: 10%;">Time</th>
+                    </tr>
+                </thead>
+                <tbody class="small">
+                    @foreach (var log in Model.RecentQuestions)
+                    {
+                        <tr>
+                            <td class="fw-semibold">@log.Question</td>
+                            <td>
+                                <span class="badge bg-secondary-subtle text-secondary">@log.Intent</span>
+                            </td>
+                            <td class="text-muted">@log.Answer</td>
+                            <td>
+                                @if (log.WasAnswered)
+                                {
+                                    <span class="badge bg-success-subtle text-success"><i class="bi bi-check me-1"></i> Yes</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning-subtle text-warning"><i class="bi bi-exclamation me-1"></i> Out of KB</span>
+                                }
+                            </td>
+                            <td class="text-muted">@log.Timestamp.ToString("MMM dd, HH:mm")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@section Scripts {
+<script>
+    function copyToClipboard(elementId, btn) {
+        var copyText = document.getElementById(elementId);
+        copyText.select();
+        copyText.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(copyText.value);
+        
+        var originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="bi bi-check2"></i> Copied!';
+        btn.classList.remove('btn-outline-secondary', 'btn-dark');
+        btn.classList.add('btn-success');
+        
+        setTimeout(function() {
+            btn.innerHTML = originalHtml;
+            btn.classList.remove('btn-success');
+            btn.classList.add('btn-outline-secondary');
+        }, 1800);
+    }
+
+    function setPlaygroundQuestion(q) {
+        document.getElementById('playgroundQuestion').value = q;
+        runPlaygroundTest();
+    }
+
+    async function runPlaygroundTest() {
+        var qInput = document.getElementById('playgroundQuestion');
+        var question = qInput.value.trim();
+        if (!question) return;
+
+        var token = document.getElementById('tokenInput').value;
+        var output = document.getElementById('playgroundOutput');
+        var btn = document.getElementById('btnRunTest');
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Processing...';
+
+        output.innerHTML = `
+            <div class="text-center py-4">
+                <div class="spinner-border text-primary mb-2" role="status"></div>
+                <div class="text-muted small">Executing 7-Stage Question & System 1 Decision Pipeline...</div>
+            </div>`;
+
+        try {
+            var response = await fetch('/api/ask', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Assistant-Token': token
+                },
+                body: JSON.stringify({ question: question })
+            });
+
+            var res = await response.json();
+            if (!res.success) {
+                output.innerHTML = `<div class="alert alert-danger m-0">${res.error}</div>`;
+                return;
+            }
+
+            var d = res.data;
+            var dt = d.decisionTrace;
+
+            var decisionHtml = '';
+            if (dt && dt.decisions && dt.decisions.length > 0) {
+                var decisionRows = dt.decisions.map(dec => {
+                    var badge = dec.isPassed === true 
+                        ? '<span class="badge bg-success">Passed</span>' 
+                        : (dec.isPassed === false ? '<span class="badge bg-danger">Failed</span>' : `<span class="badge bg-info">${dec.resultValue}</span>`);
+                    return `
+                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom">
+                            <div>
+                                <span class="fw-semibold small">${dec.description || dec.name}</span>
+                                <div class="text-muted" style="font-size:0.75rem;">${dec.rationale}</div>
+                            </div>
+                            <div class="text-end ms-2">${badge}</div>
+                        </div>`;
+                }).join('');
+
+                var overallStatus = dt.overallEligibility
+                    ? '<span class="badge bg-success fs-6"><i class="bi bi-check-circle me-1"></i> Eligible / Approved</span>'
+                    : '<span class="badge bg-danger fs-6"><i class="bi bi-x-circle me-1"></i> Ineligible / Restriction Applies</span>';
+
+                decisionHtml = `
+                    <div class="card p-3 mb-3 border-primary-subtle bg-white">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold small text-primary"><i class="bi bi-diagram-2 me-1"></i> System 1 Decision Engine Result</span>
+                            ${overallStatus}
+                        </div>
+                        <div class="small mb-2">${dt.summary}</div>
+                        <div class="bg-light p-2 rounded">${decisionRows}</div>
+                    </div>`;
+            }
+
+            var refsHtml = '';
+            if (d.references && d.references.length > 0) {
+                var refPills = d.references.map(r => `
+                    <span class="badge bg-white text-dark border p-2">
+                        📄 <strong>${r.formattedCitation}</strong>
+                        <div class="text-muted mt-1" style="font-size:0.75rem;">${r.excerpt}</div>
+                    </span>`).join('');
+                refsHtml = `<div class="mt-3"><div class="fw-bold small text-muted mb-1">Document References:</div><div class="d-flex flex-column gap-2">${refPills}</div></div>`;
+            }
+
+            output.innerHTML = `
+                <div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="badge bg-primary-subtle text-primary">Intent: ${d.intentDescription || 'Answered'}</span>
+                        <span class="text-muted small">${d.responseTimeMs} ms</span>
+                    </div>
+                    ${decisionHtml}
+                    <div class="card p-3 bg-white">
+                        <div class="fw-bold small text-muted mb-1">Final Synthesized Answer:</div>
+                        <div class="small" style="white-space: pre-line;">${d.answer}</div>
+                    </div>
+                    ${refsHtml}
+                </div>`;
+        } catch (err) {
+            output.innerHTML = `<div class="alert alert-danger m-0">Failed to connect to assistant API: ${err.message}</div>`;
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-play-fill me-1"></i> Execute';
+        }
+    }
+</script>
+}
