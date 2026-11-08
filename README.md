@@ -6,6 +6,13 @@ Unlike traditional naive RAG chatbots that rely purely on text generation, this 
 
 ---
 
+
+
+### 🎥 Walkthrough Demo Video
+- **Download / Watch on GitHub**: [AI_Knowledge_Decision_Assistant_Demo.mp4](https://github.com/SurajBelduha/AIProject/blob/main/AI_Knowledge_Decision_Assistant_Demo.mp4)
+- **Local Stream URL**: http://localhost:5084/AI_Knowledge_Decision_Assistant_Demo.mp4
+- **Interactive Presentation Player**: http://localhost:5084/demo_presentation.html
+
 ## Table of Contents
 1. [Core Features & Requirements Matrix](#core-features--requirements-matrix)
 2. [Architecture Overview & Data Flow](#architecture-overview--data-flow)
